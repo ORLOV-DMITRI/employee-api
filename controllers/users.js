@@ -13,7 +13,7 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Заполните поля" });
+      return res.status(400).json({ message: "Обязательные поля" });
     }
 
     const user = await prisma.user.findFirst({
@@ -23,7 +23,7 @@ const login = async (req, res) => {
     });
 
     const isPasswordCorrect =
-      user && (await bcrypt.compare(password, user.password));
+        user && (await bcrypt.compare(password, user.password));
     const secret = process.env.JWT_SECRET;
 
     if (user && isPasswordCorrect && secret) {
@@ -34,7 +34,7 @@ const login = async (req, res) => {
         token: jwt.sign({ id: user.id }, secret, { expiresIn: "30d" }),
       });
     } else {
-      return res.status(400).json({ message: "Ошилбка Логина или Парооооля" });
+      return res.status(400).json({ message: "Ошибка Логина или Пароля" });
     }
   } catch (error) {
     return res.status(400).json({ message: "Что то пошло не так" });
@@ -50,7 +50,7 @@ const registr = async (req, res) => {
     const { email, password, name } = req.body;
 
     if (!email || !password || !name) {
-      return res.status(400).json({ message: "Обязательно епта" });
+      return res.status(400).json({ message: "Все поля обязательны" });
     }
 
     const registeredUser = await prisma.User.findFirst({
@@ -59,7 +59,7 @@ const registr = async (req, res) => {
       },
     });
     if (registeredUser) {
-      return res.status(400).json({ message: "ТАкой уже есть" });
+      return res.status(400).json({ message: "Такой пользователь уже есть" });
     }
 
     const salt = await bcrypt.genSalt(10);
